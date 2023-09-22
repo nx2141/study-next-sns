@@ -16,7 +16,7 @@ router.post("/post", async (req, res) => {
     await prisma.post.create({
       data: {
         content,
-        authorId: 2,
+        authorId: 1,
       },
     });
     res.status(201).json(newPost);
