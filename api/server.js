@@ -20,8 +20,3 @@ app.use("/api/posts",postsRoute);
 app.use("/api/users",userRoute);
 
 app.listen(PORT, () => console.log(`server is running on Port ${PORT}`));
-
-app.use((err, req, res, next) => {
-    console.error(`${new Date().toISOString()} - ${err.stack}`);
-    res.status(500).send('Something broke!');
-  });
