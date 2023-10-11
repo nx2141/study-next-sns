@@ -25,7 +25,7 @@ router.get("/profile/:userId", async (req, res) => {
   const { userId } = req.params;
   try {
     const profile = await prisma.profile.findUnique({
-      where: { userId: parseInt(userId) },
+      where: { userId: parseInt(userId, 10) },
       include: {
         user: {
           include: {
@@ -40,6 +40,7 @@ router.get("/profile/:userId", async (req, res) => {
         .status(404)
         .json({ message: "プロフィールが見つかりませんでした" });
     }
+    res.status(200).json(profile); // プロフィールデータを返す
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: err.message });

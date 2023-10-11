@@ -6,7 +6,7 @@ const isAuthenticated = require("../middleware/isAuthenticated");
 const prisma = new PrismaClient();
 
 //つぶやき投稿API
-router.post("/post",isAuthenticated, async (req, res) => {
+router.post("/post", isAuthenticated, async (req, res) => {
   const { content } = req.body;
 
   if (!content) {
@@ -18,10 +18,10 @@ router.post("/post",isAuthenticated, async (req, res) => {
         content,
         authorId: req.userId,
       },
-      include:{
-        author:{
-          include:{
-            profile:true,
+      include: {
+        author: {
+          include: {
+            profile: true,
           },
         },
       },
@@ -38,11 +38,11 @@ router.get("/get_latest_post", async (req, res) => {
   try {
     const latestPosts = await prisma.post.findMany({
       take: 10,
-      orderBy: { createAt: "desc", },
-      include:{
-        author:{
-          include:{
-            profile:true,
+      orderBy: { createAt: "desc" },
+      include: {
+        author: {
+          include: {
+            profile: true,
           },
         },
       },
@@ -50,6 +50,28 @@ router.get("/get_latest_post", async (req, res) => {
     return res.json(latestPosts);
   } catch (err) {
     console.log(err);
+    res.status(500).json({ message: "サーバーエラーです。" });
+  }
+});
+
+//閲覧しているユーザーの投稿内容だけ取得
+router.get("/:userId", async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const userPosts = await prisma.post.findMany({
+      where: {
+        authorId: parseInt(userId),
+      },
+      orderBy: {
+        createAt: "desc",
+      },
+      include: {
+        author: true,
+      },
+    });
+    return res.json(userPosts);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "サーバーエラーです。" });
   }
 });
